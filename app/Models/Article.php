@@ -13,4 +13,9 @@ class Article extends Model
         'title',
         'description'
     ];
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\ArticlesFactory::new();
+    }
 }
