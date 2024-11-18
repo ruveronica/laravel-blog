@@ -13,7 +13,7 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $articles = Article::all();
+        $articles = Article::all()->sortBy("id");
         return view('articles.index', ['articles' => $articles]);
     }
 
@@ -22,7 +22,7 @@ class ArticleController extends Controller
      */
     public function create()
     {
-       return view('articles.create');
+        return view('articles.create');
     }
 
     /**
@@ -30,7 +30,7 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-       $validated = $request->validate([
+        $validated = $request->validate([
             'title' => 'required|min:5|max:100',
             'description' => 'required|min:50',
         ]);
@@ -51,19 +51,37 @@ class ArticleController extends Controller
         //
     }
 
+    public function edit($id)
+    {
+        $article = Article::findOrFail($id);
+        return view('articles.edit', compact('article'));
+    }
+
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Article $article)
+    public function update(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|min:5|max:100',
+            'description' => 'required|min:10',
+        ]);
+
+        $article = Article::findOrFail($request->id);
+        $article->update($validated);
+
+        return redirect()->route('articles.index')->with('success', 'Artículo actualizado con éxito.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Article $article)
+    public function destroy($id)
     {
-        //
+        $article = Article::findOrFail($id);
+        $article->delete();
+
+        return redirect()->route('articles.index')->with('success', 'Artículo eliminado con éxito.');
+
     }
 }
